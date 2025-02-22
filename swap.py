@@ -54,7 +54,7 @@ def perform_transaction(private_key):
             'from': account.address,
             'nonce': web3.eth.get_transaction_count(account.address),
             'gas': 300000,
-            'gasPrice': web3.toWei('10', 'gwei')
+            'gasPrice': web3.to_wei('10', 'gwei')  # 使用 web3.to_wei() 替代
         })
 
         # 签名交易
@@ -63,7 +63,7 @@ def perform_transaction(private_key):
         # 发送交易
         txn_hash = web3.eth.send_raw_transaction(signed_txn.rawTransaction)
 
-        tx_hash_str = web3.toHex(txn_hash)
+        tx_hash_str = web3.to_hex(txn_hash)
         print(f"交易已发送，哈希值：{tx_hash_str}")
 
         # 等待交易确认
