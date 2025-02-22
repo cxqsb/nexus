@@ -7,7 +7,8 @@ private_key = input("请输入你的私钥: ")
 rpc_url = 'https://rpc.nexus.xyz/http'
 web3 = Web3(Web3.HTTPProvider(rpc_url))
 
-if not web3.isConnected():
+# 检查是否成功连接到节点
+if not web3.is_connected():
     print("无法连接到Nexus节点")
     exit()
 
