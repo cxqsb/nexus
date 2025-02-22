@@ -5,8 +5,6 @@ from web3 import Web3, HTTPProvider
 import requests
 import subprocess
 
-install_dependencies()
-
 # 设置连接到区块链节点的 RPC URL
 RPC_URL = 'https://rpc.nexus.xyz/http'
 
