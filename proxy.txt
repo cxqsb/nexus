@@ -1,0 +1,4 @@
+http://proxy1.example.com:port
+http://proxy2.example.com:port
+http://proxy3.example.com:port
+...
