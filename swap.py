@@ -3,8 +3,18 @@ import time
 import threading
 from web3 import Web3, HTTPProvider
 import requests
-pip install web3 requests
-pip install web3
+import subprocess
+
+# 安装依赖
+def install_dependencies():
+    try:
+        subprocess.check_call([sys.executable, '-m', 'pip', 'install', 'web3', 'requests'])
+        print("依赖安装成功")
+    except subprocess.CalledProcessError as e:
+        print(f"安装依赖时出错: {str(e)}")
+        sys.exit(1)
+
+install_dependencies()
 
 # 设置连接到区块链节点的 RPC URL
 RPC_URL = 'https://rpc.nexus.xyz/http'
@@ -37,25 +47,28 @@ ABI = [
     }
 ]
 
-# 从文件中读取账号列表
-def load_accounts(filename='accounts.txt'):
-    accounts = []
-    with open(filename, 'r') as f:
-        for line in f:
-            private_key = line.strip()
-            if private_key:
-                accounts.append(private_key)
-    return accounts
+# 提示用户输入私钥和IP
+def get_user_input():
+    accounts_and_proxies = []
 
-# 从文件中读取代理列表
-def load_proxies(filename='proxies.txt'):
-    proxies = []
-    with open(filename, 'r') as f:
-        for line in f:
-            proxy = line.strip()
-            if proxy:
-                proxies.append(proxy)
-    return proxies
+    while True:
+        private_key = input("请输入你的私钥：").strip()
+        if not private_key:
+            print("私钥不能为空，请重新输入。")
+            continue
+
+        use_proxy = input("是否使用代理IP？ (y/n): ").strip().lower()
+        if use_proxy == 'y':
+            proxy = input("请输入代理IP（格式：http://username:password@proxy_address:port）：").strip()
+            accounts_and_proxies.append({"private_key": private_key, "proxy": proxy})
+        else:
+            accounts_and_proxies.append({"private_key": private_key, "proxy": None})
+
+        another = input("是否继续输入另一个账号？ (y/n): ").strip().lower()
+        if another != 'y':
+            break
+
+    return accounts_and_proxies
 
 # 执行交易
 def perform_transaction(private_key, proxy_url):
@@ -63,10 +76,11 @@ def perform_transaction(private_key, proxy_url):
         try:
             # 设置代理
             session = requests.Session()
-            session.proxies = {
-                'http': proxy_url,
-                'https': proxy_url,
-            }
+            if proxy_url:
+                session.proxies = {
+                    'http': proxy_url,
+                    'https': proxy_url,
+                }
             provider = HTTPProvider(RPC_URL, session=session)
             web3 = Web3(provider)
 
@@ -126,16 +140,12 @@ def perform_transaction(private_key, proxy_url):
             time.sleep(60)
 
 def main():
-    accounts = load_accounts()
-    proxies = load_proxies()
-
-    # 检查是否有足够的代理
-    if len(proxies) < len(accounts):
-        print("警告：代理数量少于账号数量，将重复使用代理")
+    accounts_and_proxies = get_user_input()
 
     threads = []
-    for i, private_key in enumerate(accounts):
-        proxy_url = proxies[i % len(proxies)]
+    for account_proxy in accounts_and_proxies:
+        private_key = account_proxy["private_key"]
+        proxy_url = account_proxy["proxy"]
         thread = threading.Thread(target=perform_transaction, args=(private_key, proxy_url))
         threads.append(thread)
         thread.start()
@@ -144,6 +154,4 @@ def main():
     for thread in threads:
         thread.join()
 
-if __name__ == "__main__":
-    main()
-
+if __name__ 
