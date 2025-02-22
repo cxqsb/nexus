@@ -49,12 +49,24 @@ def perform_transaction(private_key):
         # 获取合约实例
         contract = web3.eth.contract(address=CONTRACT_ADDRESS, abi=ABI)
 
+        # 获取最新的区块信息，获取 baseFeePerGas
+        latest_block = web3.eth.get_block('latest')
+        base_fee_per_gas = latest_block['baseFeePerGas']
+
+        # 设置 maxPriorityFeePerGas，例如 2 Gwei
+        max_priority_fee_per_gas = web3.to_wei('2', 'gwei')
+
+        # 计算 maxFeePerGas
+        max_fee_per_gas = base_fee_per_gas + max_priority_fee_per_gas
+
         # 构建交易
         transaction = contract.functions.increment().build_transaction({
             'from': account.address,
             'nonce': web3.eth.get_transaction_count(account.address),
             'gas': 300000,
-            'gasPrice': web3.to_wei('10', 'gwei')  # 使用 web3.to_wei() 替代
+            'maxFeePerGas': int(max_fee_per_gas),
+            'maxPriorityFeePerGas': int(max_priority_fee_per_gas),
+            'chainId': web3.eth.chain_id
         })
 
         # 签名交易
