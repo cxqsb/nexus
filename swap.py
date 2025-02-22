@@ -61,7 +61,7 @@ def perform_transaction(private_key):
         signed_txn = web3.eth.account.sign_transaction(transaction, private_key)
 
         # 发送交易
-        txn_hash = web3.eth.send_raw_transaction(signed_txn.rawTransaction)
+        txn_hash = web3.eth.send_raw_transaction(signed_txn.raw_transaction)
 
         tx_hash_str = web3.to_hex(txn_hash)
         print(f"交易已发送，哈希值：{tx_hash_str}")
