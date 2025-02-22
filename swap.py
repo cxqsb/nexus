@@ -3,6 +3,8 @@ import time
 import threading
 from web3 import Web3, HTTPProvider
 import requests
+pip install web3 requests
+pip install web3
 
 # 设置连接到区块链节点的 RPC URL
 RPC_URL = 'https://rpc.nexus.xyz/http'
