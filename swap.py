@@ -5,15 +5,6 @@ from web3 import Web3, HTTPProvider
 import requests
 import subprocess
 
-# 安装依赖
-def install_dependencies():
-    try:
-        subprocess.check_call([sys.executable, '-m', 'pip', 'install', 'web3', 'requests'])
-        print("依赖安装成功")
-    except subprocess.CalledProcessError as e:
-        print(f"安装依赖时出错: {str(e)}")
-        sys.exit(1)
-
 install_dependencies()
 
 # 设置连接到区块链节点的 RPC URL
